@@ -1,0 +1,49 @@
+import numpy as np
+import random
+
+def UUniFast(n, U_set):
+    sumU = U_set
+    U_tasks = np.random.rand(n)
+
+
+    for i in range(1,n):
+        nextSumU = sumU * (U_tasks[i-1]**(1.0/(n-i)))
+        U_tasks[i-1] = sumU - nextSumU
+        sumU = nextSumU
+
+    U_tasks[n-1] = sumU
+    return U_tasks
+
+def generateTaskSet(n, U_set):
+    taskSet = np.empty((n,2)) # A task is defined by two features Period (@0) and Computation time (@1)
+    taskSet[:, 0] = np.random.rand(n) # randomly initialize periods
+    taskSet[:, 1] = taskSet[:, 0] * UUniFast(n, U_set) # initialize computation time based on utility
+    return taskSet
+
+# because the use of random Utility will never be exactly 1
+# could change random.random() to int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1) if need be
+def generateDataSet(N, n, U=0.0, sample_set_utility=True):
+    X = np.empty((N, n, 2))
+    
+    for i in range(N):
+        X[i,:,:] = generateTaskSet(n, random.random() if sample_set_utility else U)
+
+    return X
+
+def labelDataSet(X):
+    N, _, _= X.shape
+    Y = np.zeros(N)
+
+    for i in range(N):
+        Y[i] = isFeasible(X[i, :, :])
+    
+    return Y
+
+# Exact test for schedulability under RM
+def isFeasible(taskset):
+    return True
+
+X = generateDataSet(10, 3)
+print(X)
+Y = labelDataSet(X)
+print(Y)
