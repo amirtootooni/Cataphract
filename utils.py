@@ -33,23 +33,23 @@ def generateDataSet(N, n, U=0.0, sample_set_utility=True):
 
     return X
 
-def labelDataSet(X):
+def labelDataSet(X, useRTA=True):
     N, n, _= X.shape
     Y = np.zeros(N)
 
     for i in range(N):
-        Y[i] = isFeasible(X[i, :, :], n)
+        Y[i] = RTALabeling(X[i, :, :], n) if useRTA else hyperbolicBoundLabeling(X[i, :, :])
     
     return Y
 
 # Exact test for schedulability under RM (responce time analysis)
-def isFeasible(taskset, n):
+def RTALabeling(taskset, n):
     # sort taskset such that index is inversely proportional to priority 
     # sort min to max based on task period
     ts = np.sort(taskset, axis=0)
 
     for i in range(1, n):
-        I = 0
+        I = 0.0
         P = ts[i, 0]
         C = ts[i, 1]
 
@@ -63,7 +63,5 @@ def isFeasible(taskset, n):
     
     return True
 
-X = generateDataSet(20, 16, U=1.0, sample_set_utility=False)
-print(X)
-Y = labelDataSet(X)
-print(Y)
+def hyperbolicBoundLabeling(taskset):
+    return np.prod(taskset[:,1]/taskset[:,0] + 1) <= 2

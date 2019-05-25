@@ -24,3 +24,10 @@ def testUUniFast(n):
 
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,3.0] ]), 3) + ' should be true')
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,7.0] ]), 3) + ' should be false')
+
+# X = utils.generateDataSet(50, 32, U=0.99, sample_set_utility=False)
+# print(X)
+# Ye = utils.labelDataSet(X)
+# print(Ye)
+# Yh = utils.labelDataSet(X, useRTA=False)
+# print(Yh)
