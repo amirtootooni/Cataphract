@@ -1,6 +1,9 @@
 import numpy as np
 import random
 
+# Threshold for determining the quality of R before stopping value iteration
+VI_THRESHOLD = 0.0001
+
 def UUniFast(n, U_set):
     sumU = U_set
     U_tasks = np.random.rand(n)
@@ -31,19 +34,36 @@ def generateDataSet(N, n, U=0.0, sample_set_utility=True):
     return X
 
 def labelDataSet(X):
-    N, _, _= X.shape
+    N, n, _= X.shape
     Y = np.zeros(N)
 
     for i in range(N):
-        Y[i] = isFeasible(X[i, :, :])
+        Y[i] = isFeasible(X[i, :, :], n)
     
     return Y
 
-# Exact test for schedulability under RM
-def isFeasible(taskset):
+# Exact test for schedulability under RM (responce time analysis)
+def isFeasible(taskset, n):
+    # sort taskset such that index is inversely proportional to priority 
+    # sort min to max based on task period
+    ts = np.sort(taskset, axis=0)
+
+    for i in range(1, n):
+        I = 0
+        P = ts[i, 0]
+        C = ts[i, 1]
+
+        while(True):
+            R = I + C
+            if (R > P): 
+                return False
+            I = np.sum(np.ceil(R/ts[0:i, 0])*ts[0:i, 1])
+            if (abs(I + C - R) < VI_THRESHOLD):
+                break
+    
     return True
 
-X = generateDataSet(10, 3)
+X = generateDataSet(20, 16, U=1.0, sample_set_utility=False)
 print(X)
 Y = labelDataSet(X)
 print(Y)
