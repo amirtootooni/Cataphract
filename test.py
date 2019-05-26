@@ -1,5 +1,5 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
 import numpy as np
 import utils
 import main
@@ -33,7 +33,7 @@ def testUUniFast(n):
 
 def testDT():
     X, y, _ = utils.generateDataSet(10000, 16)
-    X_test, y_test, y_hyp = utils.generateDataSet(1000, 16, include_hyperbolic_labeling=True)
+    X_test, y_test, y_hyp = utils.generateDataSet(2000, 16, include_hyperbolic_labeling=True)
 
     model, depth = main.trainDecisionTree(X,y)
     y_pred = model.predict(X)
@@ -49,7 +49,7 @@ def testDT():
 
 def testRF():
     X, y, _ = utils.generateDataSet(10000, 16)
-    X_test, y_test, y_hyp = utils.generateDataSet(1000, 16, include_hyperbolic_labeling=True)
+    X_test, y_test, y_hyp = utils.generateDataSet(2000, 16, include_hyperbolic_labeling=True)
 
 
     model, depth = main.trainRandomForrest(X,y)
@@ -65,8 +65,8 @@ def testRF():
     print('Hyperbolic error: ', hyperbolicError)
 
 def testKNN():
-    X, y, _ = utils.generateDataSet(5000, 16)
-    X_test, y_test, y_hyp = utils.generateDataSet(500, 16, include_hyperbolic_labeling=True)
+    X, y, _ = utils.generateDataSet(10000, 16)
+    X_test, y_test, y_hyp = utils.generateDataSet(2000, 16, include_hyperbolic_labeling=True)
 
 
     model, k = main.trainKNN(X,y)
@@ -96,3 +96,8 @@ def testNeuralNet():
     print('Training error: ', trainingError)
     print('Test error: ', testError)
     print('Hyperbolic error: ', hyperbolicError)
+
+testDT()
+testRF()
+testKNN()
+testNeuralNet()
