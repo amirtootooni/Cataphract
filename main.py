@@ -104,11 +104,20 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
 
     fig, ax = plt.subplots()
     ax.set_title('Performance of different models')
-    ax.set_xlabel('Model used to determine Feasibility')
     ax.set_ylabel('Error Percentage')
     ax.set_ylim(0, 30)
     ax.boxplot([hyperbolic_errors, test_errors[:, 0], test_errors[:, 1], test_errors[:, 2], test_errors[:, 3]])
     ax.set_xticklabels(['Hyperbolic Bound', 'Decision Tree', 'Random Forrest', 'kNN', 'Neural Network'], rotation=18, fontsize=8)
-    plt.show()
+    ax.set_xlabel('Model used to determine Feasibility')
+    plt.savefig('Performance.png')
 
-analyzeModels(10, 1000, 100, 4)
+    fig, ax = plt.subplots()
+    ax.set_title('Training error of different models')
+    ax.set_ylabel('Training Error Percentage')
+    ax.set_ylim(0, 30)
+    ax.boxplot([training_errors[:, 0], training_errors[:, 1], training_errors[:, 2], training_errors[:, 3]])
+    ax.set_xticklabels(['Decision Tree', 'Random Forrest', 'kNN', 'Neural Network'], rotation=18, fontsize=8)
+    ax.set_xlabel('Model')
+    plt.savefig('TrainingErrors.png')
+
+analyzeModels(5, 1000, 100, 4)
