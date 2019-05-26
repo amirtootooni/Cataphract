@@ -25,22 +25,22 @@ def generateTaskSet(n, U_set):
 
 # because the use of random Utility will never be exactly 1
 # could change random.random() to int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1) if need be
-def generateDataSet(N, n, U=0.0, sample_set_utility=True):
+# also lables data and returns the lables
+def generateDataSet(N, n, U=0.0, sample_set_utility=True, include_hyperbolic_labeling=False):
     X = np.empty((N, n, 2))
-    
+    y_rta = np.empty(N)
+    y_hyp = np.empty(N)
+
     for i in range(N):
         X[i,:,:] = generateTaskSet(n, random.random() if sample_set_utility else U)
-
-    return X
-
-def labelDataSet(X, useRTA=True):
-    N, n, _= X.shape
-    Y = np.zeros(N)
-
-    for i in range(N):
-        Y[i] = RTALabeling(X[i, :, :], n) if useRTA else hyperbolicBoundLabeling(X[i, :, :])
+        y_rta[i] = RTALabeling(X[i, :, :], n)
+        if include_hyperbolic_labeling:
+            y_hyp[i] = hyperbolicBoundLabeling(X[i, :, :])
     
-    return Y
+    # want a task set to be represented as an array of features for training models
+    X_flat = np.reshape(X,(N, n*2))
+    return X_flat, y_rta, y_hyp  
+
 
 # Exact test for schedulability under RM (responce time analysis)
 def RTALabeling(taskset, n):

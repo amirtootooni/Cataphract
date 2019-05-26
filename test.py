@@ -2,6 +2,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 import utils
+import main
 
 def testUUniFast(n):
 
@@ -25,9 +26,26 @@ def testUUniFast(n):
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,3.0] ]), 3) + ' should be true')
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,7.0] ]), 3) + ' should be false')
 
-# X = utils.generateDataSet(50, 32, U=0.99, sample_set_utility=False)
+# X, y, y_hyp = utils.generateDataSet(10, 16, U=0.72, sample_set_utility=False, include_hyperbolic_labeling=True)
 # print(X)
-# Ye = utils.labelDataSet(X)
-# print(Ye)
-# Yh = utils.labelDataSet(X, useRTA=False)
-# print(Yh)
+# print(y)
+# print(y_hyp)
+
+def testDT():
+    X, y, _ = utils.generateDataSet(10000, 16)
+    X_test, y_test, y_hyp = utils.generateDataSet(1000, 16, include_hyperbolic_labeling=True)
+
+
+    model, depth = main.trainDecisionTree(X,y)
+    y_pred = model.predict(X)
+    trainingError = np.mean(y_pred != y)
+    y_pred = model.predict(X_test)
+    testError = np.mean(y_pred != y_test)
+    hyperbolicError = np.mean(y_hyp != y_test)
+
+    print('depth: ', depth)
+    print('Training error: ', trainingError)
+    print('Test error: ', testError)
+    print('Hyperbolic error: ', hyperbolicError)
+
+testDT()
