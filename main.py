@@ -1,6 +1,7 @@
 import numpy as np
 import utils
 import matplotlib.pyplot as plt
+from threading import Thread
 
 # sklearn Statistical models
 from sklearn.ensemble import RandomForestClassifier
@@ -12,25 +13,35 @@ from sklearn.tree.export import export_graphviz
 import graphviz
 import os
 
+
 # os.environ["PATH"] += os.pathsep + 'C:/Users/Amirhossein/Downloads/graphviz-2.38/release/bin'
 
 # sklearn Cross validation tools
 from sklearn.model_selection import cross_val_score
 
-NUM_FOLDS_VALIDATION = 4
+NUM_CV_FOLDS = 4
 
 # k-fold cross validation to find the optimal tree depth for a given set and return the model
 def trainDecisionTree(X, y, max_depth=5, step_size=1):
+    depths = range(1, max_depth+1, step_size)
+    scores = np.empty(len(depths))
 
-    best_score = 0.0
-    best_depth = 1
-    for i in range(1, max_depth+1, step_size):
-        model = DecisionTreeClassifier(max_depth=i, criterion='entropy', random_state=1)
-        score = cross_val_score(model, X, y, cv=NUM_FOLDS_VALIDATION).mean()
-        if (score > best_score):
-            best_score = score
-            best_depth = i
+    def validator(X, y, scores, depth, i):
+        model = DecisionTreeClassifier(max_depth=depth, criterion='entropy', random_state=1)
+        scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
     
+    threads = []
+    i = 0
+    for d in depths:
+        threads.append(Thread(target=validator, args = (X, y, scores, d, i)))
+        threads[i].start()
+        i = i + 1
+
+    for t in threads:
+        t.join()
+
+    best_depth = depths[np.argmax(scores)]
+
     model = DecisionTreeClassifier(max_depth=best_depth, criterion='entropy', random_state=1)
     model = model.fit(X,y)
 
@@ -41,34 +52,49 @@ def trainDecisionTree(X, y, max_depth=5, step_size=1):
     return model, best_depth
 
 def trainRandomForrest(X, y, max_depth=5, step_size=1):
-    best_score = 0.0
-    best_depth = 1
+    depths = range(1, max_depth+1, step_size)
+    scores = np.empty(len(depths))
+
+    def validator(X, y, scores, depth, i):
+        model = RandomForestClassifier(max_depth=depth, n_estimators=100)
+        scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
     
-    for i in range(1, max_depth+1, step_size):
-        model = RandomForestClassifier(max_depth=i, n_estimators=100)
-        score = cross_val_score(model, X, y, cv=NUM_FOLDS_VALIDATION).mean()
-        if (score > best_score):
-            best_score = score
-            best_depth = i
-    
-    
+    threads = []
+    i = 0
+    for d in depths:
+        threads.append(Thread(target=validator, args = (X, y, scores, d, i)))
+        threads[i].start()
+        i = i + 1
+
+    for t in threads:
+        t.join()
+
+    best_depth = depths[np.argmax(scores)]
+
     model = RandomForestClassifier(max_depth=best_depth, n_estimators=100)
     model = model.fit(X,y)
 
     return model, best_depth
 
 def trainkNN(X, y, max_k=10, step_size=1):
-    best_score = 0.0
-    best_k = 2
+    ks = range(2, max_k+1, step_size)
+    scores = np.empty(len(ks))
+
+    def validator(X, y, scores, k, i):
+        model = KNeighborsClassifier(n_neighbors=k)
+        scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
+
+    threads = []
+    i = 0
+    for k in ks:
+        threads.append(Thread(target=validator, args = (X, y, scores, k, i)))
+        threads[i].start()
+        i = i + 1
+
+    for t in threads:
+        t.join()
     
-    for i in range(2, max_k+1, step_size):
-        model = KNeighborsClassifier(n_neighbors=i)
-        score = cross_val_score(model, X, y, cv=NUM_FOLDS_VALIDATION).mean()
-        if (score > best_score):
-            best_score = score
-            best_k = i
-    
-    
+    best_k = ks[np.argmax(scores)]
     model = KNeighborsClassifier(n_neighbors=best_k)
     model = model.fit(X,y)
     return model, best_k

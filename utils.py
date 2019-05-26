@@ -44,7 +44,6 @@ def generateDataSet(N, n, U=0.0, sample_set_utility=True, include_hyperbolic_lab
 
     num_threads = ceil(N/BATCH_SIZE)
     threads = []
-    print(num_threads)
     for i in range(num_threads):
         start = i*BATCH_SIZE
         end = start + (BATCH_SIZE if N - i*BATCH_SIZE >= BATCH_SIZE else N - i*BATCH_SIZE)

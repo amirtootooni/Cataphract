@@ -65,8 +65,8 @@ def testRF():
     print('Hyperbolic error: ', hyperbolicError)
 
 def testkNN():
-    X, y, _ = utils.generateDataSet(1000, 16)
-    X_test, y_test, y_hyp = utils.generateDataSet(100, 16, include_hyperbolic_labeling=True)
+    X, y, _ = utils.generateDataSet(5000, 16)
+    X_test, y_test, y_hyp = utils.generateDataSet(500, 16, include_hyperbolic_labeling=True)
 
 
     model, k = main.trainkNN(X,y)
@@ -98,3 +98,5 @@ def testNeuralNet():
     print('Hyperbolic error: ', hyperbolicError)
 
 testDT()
+testRF()
+testkNN()
