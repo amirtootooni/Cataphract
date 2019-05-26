@@ -46,7 +46,8 @@ def generateDataSet(N, n, U=0.0, sample_set_utility=True, include_hyperbolic_lab
 def RTALabeling(taskset, n):
     # sort taskset such that index is inversely proportional to priority 
     # sort min to max based on task period
-    ts = np.sort(taskset, axis=0)
+    ts = np.asarray(taskset)
+    ts = np.sort(ts, axis=0)
 
     for i in range(1, n):
         I = 0.0
