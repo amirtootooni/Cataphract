@@ -26,14 +26,14 @@ def trainDecisionTree(X, y, max_depth=5, step_size=1):
     depths = range(1, max_depth+1, step_size)
     scores = np.empty(len(depths))
 
-    def validator(X, y, scores, depth, i):
+    def validatorDT(X, y, scores, depth, i):
         model = DecisionTreeClassifier(max_depth=depth, criterion='entropy', random_state=1)
         scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
     
     threads = []
     i = 0
     for d in depths:
-        threads.append(Thread(target=validator, args = (X, y, scores, d, i)))
+        threads.append(Thread(target=validatorDT, args = (X, y, scores, d, i)))
         threads[i].start()
         i = i + 1
 
@@ -55,14 +55,14 @@ def trainRandomForrest(X, y, max_depth=5, step_size=1):
     depths = range(1, max_depth+1, step_size)
     scores = np.empty(len(depths))
 
-    def validator(X, y, scores, depth, i):
+    def validatorRF(X, y, scores, depth, i):
         model = RandomForestClassifier(max_depth=depth, n_estimators=100)
         scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
     
     threads = []
     i = 0
     for d in depths:
-        threads.append(Thread(target=validator, args = (X, y, scores, d, i)))
+        threads.append(Thread(target=validatorRF, args = (X, y, scores, d, i)))
         threads[i].start()
         i = i + 1
 
@@ -76,18 +76,18 @@ def trainRandomForrest(X, y, max_depth=5, step_size=1):
 
     return model, best_depth
 
-def trainkNN(X, y, max_k=10, step_size=1):
+def trainKNN(X, y, max_k=10, step_size=1):
     ks = range(2, max_k+1, step_size)
     scores = np.empty(len(ks))
 
-    def validator(X, y, scores, k, i):
+    def validatorKNN(X, y, scores, k, i):
         model = KNeighborsClassifier(n_neighbors=k)
         scores[i] = cross_val_score(model, X, y, cv=NUM_CV_FOLDS).mean()
 
     threads = []
     i = 0
     for k in ks:
-        threads.append(Thread(target=validator, args = (X, y, scores, k, i)))
+        threads.append(Thread(target=validatorKNN, args = (X, y, scores, k, i)))
         threads[i].start()
         i = i + 1
 
@@ -109,9 +109,9 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
     training_errors = np.zeros((4, num_models))
     test_errors = np.zeros((4, num_models))
     hyperbolic_errors = np.zeros(num_models)
-    models = [trainDecisionTree, trainRandomForrest, trainkNN, trainNeuralNetwork]
     
-    for i in range(num_models):
+    def analyzeModel(training_size, test_size, num_tasks, training_errors, test_errors, hyperbolic_errors, i):
+        models = [trainDecisionTree, trainRandomForrest, trainKNN, trainNeuralNetwork]
         X, y, _ = utils.generateDataSet(training_size, num_tasks)
         X_test, y_test, y_hyp = utils.generateDataSet(test_size, num_tasks, include_hyperbolic_labeling=True)
 
@@ -123,10 +123,28 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
             training_errors[0, j] = np.mean(y_pred != y)*100
             y_pred = model.predict(X_test)
             test_errors[0, j] = np.mean(y_pred != y_test)*100
+    
+    threads = []
+    for i in range(num_models):
+        threads.append(Thread(target=analyzeModel, args =(training_size, test_size, num_tasks, training_errors, test_errors, hyperbolic_errors, i)))
+        threads[i].start()
 
-    print('Training error: ', training_errors)
-    print('Test error: ', test_errors)
-    print('Hyperbolic error: ', hyperbolic_errors)
+    for t in threads:
+        t.join()
+
+    print('Training errors: ', training_errors)
+    print('Test errors: ', test_errors)
+    print('Hyperbolic errors: ', hyperbolic_errors)
+
+    print('DT average Training error: ', np.mean(training_errors[:, 0]))
+    print('RF average Training error: ', np.mean(training_errors[:, 1]))
+    print('kNN average Training error: ', np.mean(training_errors[:, 2]))
+    print('NeuralNet average Training error: ', np.mean(training_errors[:, 3]))
+    print('DT average test error: ', np.mean(test_errors[:, 0]))
+    print('RF average test error: ', np.mean(test_errors[:, 1]))
+    print('kNN average test error: ', np.mean(test_errors[:, 2]))
+    print('NeuralNet average test error: ', np.mean(test_errors[:, 3]))
+    print('Hyperbolic average error: ', np.mean(hyperbolic_errors))
 
     fig, ax = plt.subplots()
     ax.set_title('Performance of different models')
@@ -145,3 +163,5 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
     ax.set_xticklabels(['Decision Tree', 'Random Forrest', 'kNN', 'Neural Network'], rotation=18, fontsize=8)
     ax.set_xlabel('Model')
     plt.savefig('TrainingErrors.png')
+
+analyzeModels(50, 10000, 2000, 16)
