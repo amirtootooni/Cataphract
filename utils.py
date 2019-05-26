@@ -4,7 +4,7 @@ from threading import Thread
 from math import ceil
 
 # Threshold for determining the quality of R before stopping value iteration
-VI_THRESHOLD = 0.0001
+VI_THRESHOLD = 0.000001
 # for making threads for data generation
 BATCH_SIZE = 512
 
@@ -30,14 +30,14 @@ def generateTaskSet(n, U_set):
 # because the use of random Utility will never be exactly 1
 # could change random.random() to int.from_bytes(os.urandom(8), byteorder="big") / ((1 << 64) - 1) if need be
 # also lables data and returns the lables
-def generateDataSet(N, n, U=0.0, sample_set_utility=True, include_hyperbolic_labeling=False):
+def generateDataSet(N, n, U=1.0, sample_set_utility=True, include_hyperbolic_labeling=False):
     X = np.empty((N, n, 2))
     y_rta = np.empty(N)
     y_hyp = np.empty(N)
 
     def taskSetMaker(X, y_rta, y_hyp, size, n, U, sample_set_utility):
         for i in range(0, size):
-            X[i,:,:] = generateTaskSet(n, random.random() if sample_set_utility else U)
+            X[i,:,:] = generateTaskSet(n, random.uniform(0.7, 1.0) if sample_set_utility else U)
             y_rta[i] = RTALabeling(X[i, :, :], n)
             if include_hyperbolic_labeling:
                 y_hyp[i] = hyperbolicBoundLabeling(X[i, :, :])

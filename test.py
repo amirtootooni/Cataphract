@@ -31,9 +31,12 @@ def testUUniFast(n):
 # print(y)
 # print(y_hyp)
 
-def testDT():
-    X, y, _ = utils.generateDataSet(10000, 16)
-    X_test, y_test, y_hyp = utils.generateDataSet(1000, 16, include_hyperbolic_labeling=True)
+def testDT(N, n, t):
+    X, y, _ = utils.generateDataSet(N, n, sample_set_utility=False)
+    X_test, y_test, y_hyp = utils.generateDataSet(t, n, include_hyperbolic_labeling=True, sample_set_utility=False)
+
+    print('Percent feasible in training set: ', np.mean(y == 1)*100)
+    print('Percent feasible in test set: ', np.mean(y_test == 1)*100)
 
     model, depth = main.trainDecisionTree(X,y)
     y_pred = model.predict(X)
@@ -42,6 +45,7 @@ def testDT():
     testError = np.mean(y_pred != y_test)
     hyperbolicError = np.mean(y_hyp != y_test)
 
+    print('Decision Tree:')
     print('depth: ', depth)
     print('Training error: ', trainingError)
     print('Test error: ', testError)
@@ -59,6 +63,7 @@ def testRF():
     testError = np.mean(y_pred != y_test)
     hyperbolicError = np.mean(y_hyp != y_test)
 
+    print('Random Forrest:')
     print('depth: ', depth)
     print('Training error: ', trainingError)
     print('Test error: ', testError)
@@ -76,6 +81,7 @@ def testKNN():
     testError = np.mean(y_pred != y_test)
     hyperbolicError = np.mean(y_hyp != y_test)
 
+    print('KNN:')
     print('k: ', k)
     print('Training error: ', trainingError)
     print('Test error: ', testError)
@@ -93,6 +99,10 @@ def testNeuralNet():
     testError = np.mean(y_pred != y_test)
     hyperbolicError = np.mean(y_hyp != y_test)
 
+    print('Neural Net:')
     print('Training error: ', trainingError)
     print('Test error: ', testError)
     print('Hyperbolic error: ', hyperbolicError)
+
+
+# testDT(10000, 16, 1000)
