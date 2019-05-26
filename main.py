@@ -45,3 +45,19 @@ def trainRandomForrest(X, y, max_depth=5, step_size=1):
     model.fit(X,y)
 
     return model, best_depth
+
+def trainkNN(X, y, max_k=10, step_size=1):
+    best_score = 0.0
+    best_k = 2
+    
+    for i in range(2, max_k+1, step_size):
+        model = KNeighborsClassifier(n_neighbors=i)
+        score = cross_val_score(model, X, y, cv=NUM_FOLDS_VALIDATION).mean()
+        if (score > best_score):
+            best_score = score
+            best_k = i
+    
+    
+    model = KNeighborsClassifier(n_neighbors=best_k)
+    model.fit(X,y)
+    return model, best_k

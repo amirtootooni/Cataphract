@@ -65,4 +65,21 @@ def testRF():
     print('Test error: ', testError)
     print('Hyperbolic error: ', hyperbolicError)
 
-testRF()
+def testkNN():
+    X, y, _ = utils.generateDataSet(1000, 16)
+    X_test, y_test, y_hyp = utils.generateDataSet(100, 16, include_hyperbolic_labeling=True)
+
+
+    model, k = main.trainkNN(X,y)
+    y_pred = model.predict(X)
+    trainingError = np.mean(y_pred != y)
+    y_pred = model.predict(X_test)
+    testError = np.mean(y_pred != y_test)
+    hyperbolicError = np.mean(y_hyp != y_test)
+
+    print('k: ', k)
+    print('Training error: ', trainingError)
+    print('Test error: ', testError)
+    print('Hyperbolic error: ', hyperbolicError)
+
+testkNN()
