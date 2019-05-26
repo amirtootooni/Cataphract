@@ -1,8 +1,12 @@
 import numpy as np
 import random
+from threading import Thread
+from math import ceil
 
 # Threshold for determining the quality of R before stopping value iteration
 VI_THRESHOLD = 0.0001
+# for making threads for data generation
+BATCH_SIZE = 512
 
 def UUniFast(n, U_set):
     sumU = U_set
@@ -31,12 +35,25 @@ def generateDataSet(N, n, U=0.0, sample_set_utility=True, include_hyperbolic_lab
     y_rta = np.empty(N)
     y_hyp = np.empty(N)
 
-    for i in range(N):
-        X[i,:,:] = generateTaskSet(n, random.random() if sample_set_utility else U)
-        y_rta[i] = RTALabeling(X[i, :, :], n)
-        if include_hyperbolic_labeling:
-            y_hyp[i] = hyperbolicBoundLabeling(X[i, :, :])
-    
+    def taskSetMaker(X, y_rta, y_hyp, size, n, U, sample_set_utility):
+        for i in range(0, size):
+            X[i,:,:] = generateTaskSet(n, random.random() if sample_set_utility else U)
+            y_rta[i] = RTALabeling(X[i, :, :], n)
+            if include_hyperbolic_labeling:
+                y_hyp[i] = hyperbolicBoundLabeling(X[i, :, :])
+
+    num_threads = ceil(N/BATCH_SIZE)
+    threads = []
+    print(num_threads)
+    for i in range(num_threads):
+        start = i*BATCH_SIZE
+        end = start + (BATCH_SIZE if N - i*BATCH_SIZE >= BATCH_SIZE else N - i*BATCH_SIZE)
+        threads.append(Thread(target=taskSetMaker, args = (X[start:end,:,:], y_rta[start:end], y_hyp[start:end], end-start, n, U, sample_set_utility)))
+        threads[i].start()
+
+    for t in threads:
+        t.join()
+
     # want a task set to be represented as an array of features for training models
     X_flat = np.reshape(X,(N, n*2))
     return X_flat, y_rta, y_hyp  

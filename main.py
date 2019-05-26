@@ -119,5 +119,3 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
     ax.set_xticklabels(['Decision Tree', 'Random Forrest', 'kNN', 'Neural Network'], rotation=18, fontsize=8)
     ax.set_xlabel('Model')
     plt.savefig('TrainingErrors.png')
-
-analyzeModels(5, 1000, 100, 4)

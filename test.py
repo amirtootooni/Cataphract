@@ -26,7 +26,7 @@ def testUUniFast(n):
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,3.0] ]), 3) + ' should be true')
 # print(utils.isFeasible(np.asarray([[1.2,0.3],[8.0,2.0],[11.0,7.0] ]), 3) + ' should be false')
 
-# X, y, y_hyp = utils.generateDataSet(10, 16, U=0.72, sample_set_utility=False, include_hyperbolic_labeling=True)
+# X, y, y_hyp = utils.generateDataSet(3000, 32, U=0.60, sample_set_utility=False, include_hyperbolic_labeling=True)
 # print(X)
 # print(y)
 # print(y_hyp)
