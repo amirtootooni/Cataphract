@@ -29,4 +29,19 @@ def trainDecisionTree(X, y, max_depth=5, step_size=1):
 
     return model, best_depth
 
+def trainRandomForrest(X, y, max_depth=5, step_size=1):
+    best_score = 0.0
+    best_depth = 1
+    
+    for i in range(1, max_depth+1, step_size):
+        model = RandomForestClassifier(max_depth=i, n_estimators=100)
+        score = cross_val_score(model, X, y, cv=NUM_FOLDS_VALIDATION).mean()
+        if (score > best_score):
+            best_score = score
+            best_depth = i
+    
+    
+    model = RandomForestClassifier(max_depth=best_depth, n_estimators=100)
+    model.fit(X,y)
 
+    return model, best_depth
