@@ -1,8 +1,8 @@
 digraph Tree {
 node [shape=box] ;
-0 [label="X[31] <= 0.012\nentropy = 0.86\nsamples = 10000\nvalue = [2832, 7168]"] ;
-1 [label="entropy = 0.779\nsamples = 4159\nvalue = [960, 3199]"] ;
+0 [label="X[1] <= 254.162\nentropy = 0.863\nsamples = 10000\nvalue = [2858, 7142]"] ;
+1 [label="entropy = 0.81\nsamples = 6041\nvalue = [1506, 4535]"] ;
 0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
-2 [label="entropy = 0.905\nsamples = 5841\nvalue = [1872, 3969]"] ;
+2 [label="entropy = 0.926\nsamples = 3959\nvalue = [1352, 2607]"] ;
 0 -> 2 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
 }

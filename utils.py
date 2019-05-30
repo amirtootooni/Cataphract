@@ -23,7 +23,7 @@ def UUniFast(n, U_set):
 
 def generateTaskSet(n, U_set):
     taskSet = np.empty((n,2)) # A task is defined by two features Period (@0) and Computation time (@1)
-    taskSet[:, 0] = np.random.rand(n) # randomly initialize periods
+    taskSet[:, 0] = np.random.randint(1,high=10000, size=n) # randomly initialize periods (as integers)
     taskSet[:, 1] = taskSet[:, 0] * UUniFast(n, U_set) # initialize computation time based on utility
     return taskSet
 
@@ -37,7 +37,7 @@ def generateDataSet(N, n, U=1.0, sample_set_utility=True, include_hyperbolic_lab
 
     def taskSetMaker(X, y_rta, y_hyp, size, n, U, sample_set_utility):
         for i in range(0, size):
-            X[i,:,:] = generateTaskSet(n, random.uniform(0.7, 1.0) if sample_set_utility else U)
+            X[i,:,:] = generateTaskSet(n, random.uniform(n(2**(1.0/n)-1), 1.0) if sample_set_utility else U)
             y_rta[i] = RTALabeling(X[i, :, :], n)
             if include_hyperbolic_labeling:
                 y_hyp[i] = hyperbolicBoundLabeling(X[i, :, :])

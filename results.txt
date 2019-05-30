@@ -96,3 +96,56 @@ RF average test error:  27.6
 kNN average test error:  34.4
 NeuralNet average test error:  30.2
 Hyperbolic average error:  69.8
+
+Task set utility set to 1.0 with integer task periods
+
+Model:  0
+Parameter:  1
+Model:  1
+Parameter:  15
+Iteration:  1
+Percent feasible in training set:  72.35000000000001
+Percent feasible in test set:  70.0
+Model:  0
+Parameter:  1
+Model:  1
+Parameter:  15
+Iteration:  2
+Percent feasible in training set:  72.03
+Percent feasible in test set:  72.8
+Model:  0
+Parameter:  1
+Model:  1
+Parameter:  16
+Iteration:  3
+Percent feasible in training set:  71.52
+Percent feasible in test set:  73.1
+Model:  0
+Parameter:  1
+Model:  1
+Parameter:  14
+Iteration:  4
+Percent feasible in training set:  71.41999999999999
+Percent feasible in test set:  70.3
+Model:  0
+Parameter:  1
+Model:  1
+Parameter:  16
+Training errors:  [[0.2868 0.2765 0.2797 0.2848 0.2858]
+ [0.0029 0.0026 0.0004 0.0047 0.0007]
+ [0.     0.     0.     0.     0.    ]
+ [0.     0.     0.     0.     0.    ]]
+Test errors:  [[0.273 0.3   0.272 0.269 0.297]
+ [0.262 0.286 0.262 0.259 0.282]
+ [0.    0.    0.    0.    0.   ]
+ [0.    0.    0.    0.    0.   ]]
+Hyperbolic errors:  [0.727 0.7   0.728 0.731 0.703]
+DT average Training error:  28.272000000000002
+RF average Training error:  0.22600000000000003
+kNN average Training error:  0.0
+NeuralNet average Training error:  0.0
+DT average test error:  28.22
+RF average test error:  27.02
+kNN average test error:  0.0
+NeuralNet average test error:  0.0
+Hyperbolic average error:  71.78

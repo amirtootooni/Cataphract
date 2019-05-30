@@ -112,21 +112,21 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
     training_errors = np.zeros((4, num_models))
     test_errors = np.zeros((4, num_models))
     hyperbolic_errors = np.zeros(num_models)
-    models = [trainDecisionTree, trainRandomForrest, trainKNN, trainNeuralNetwork]
+    models = [trainDecisionTree, trainRandomForrest]#, trainKNN, trainNeuralNetwork]
     
     for i in range(num_models):
         print('Iteration: ', i)
         X, y, _ = utils.generateDataSet(training_size, num_tasks, sample_set_utility=False)
         X_test, y_test, y_hyp = utils.generateDataSet(test_size, num_tasks, include_hyperbolic_labeling=True, sample_set_utility=False)
-
         print('Percent feasible in training set: ', np.mean(y == 1)*100)
         print('Percent feasible in test set: ', np.mean(y_test == 1)*100)
 
         hyperbolic_errors[i] = np.mean(y_hyp != y_test)
 
-        for j in range(4):
+        for j in range(len(models)):
             print('Model: ', j)
-            model, _ = models[j](X,y)
+            model, p = models[j](X,y)
+            print('Parameter: ', p)
             y_pred = model.predict(X)
             training_errors[j, i] = np.mean(y_pred != y)
             y_pred = model.predict(X_test)
@@ -168,4 +168,4 @@ def analyzeModels(num_models, training_size, test_size, num_tasks):
     ax.set_xlabel('Model')
     plt.savefig('TrainingErrors.png')
 
-analyzeModels(1, 10000, 2000, 16)
+analyzeModels(5, 10000, 1000, 16)
